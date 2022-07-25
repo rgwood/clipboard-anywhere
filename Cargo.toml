@@ -1,0 +1,20 @@
+[package]
+name = "clipboard-anywhere"
+description = "Copy text to the clipboard, even in WSL and SSH sessions"
+version = "0.1.0"
+edition = "2021"
+authors = ["Reilly Wood"]
+repository = "https://github.com/rgwood/clipboard-anywhere"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.57"
+base64 = "0.13.0"
+clipboard = "0.5.0"
+wsl = "0.1.0"
+
+[[bin]]
+name = "test-program"
+path = "src/bin/test.rs"
