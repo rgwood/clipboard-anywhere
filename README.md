@@ -1,5 +1,7 @@
 # clipboard-anywhere
 
+[![Crates.io](https://img.shields.io/crates/v/clipboard-anywhere.svg)](https://crates.io/crates/clipboard-anywhere)
+
 A simple wrapper around [`clipboard`](https://lib.rs/crates/clipboard) that works in a few more situations:
 
 - When used in Linux under WSL, it will copy to the Windows clipboard using `clip.exe`
