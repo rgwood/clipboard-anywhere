@@ -13,3 +13,8 @@ use clipboard_anywhere::set_clipboard;
 let text = "Hello, world!";
 clipboard_anywhere::set_clipboard(text)?;
 ```
+
+## To Do
+
+- [ ] Define custom errors instead of passing everything through Anyhow
+- [ ] Write some integration tests
