@@ -5,7 +5,7 @@ use std::{
 };
 
 use anyhow::Result;
-use clipboard::{ClipboardContext, ClipboardProvider};
+use arboard::Clipboard;
 
 /// Copy text to the clipboard. Has special handling for WSL and SSH sessions, otherwise
 /// falls back to the cross-platform `clipboard` crate
@@ -17,9 +17,9 @@ pub fn set_clipboard(text: &str) -> Result<()> {
         set_clipboard_osc_52(text);
     } else {
         // we're probably running on a host/primary OS, so use the default clipboard
-        match ClipboardContext::new() {
+        match Clipboard::new() {
             Ok(mut ctx) => {
-                if let Err(e) = ctx.set_contents(text.to_string()) {
+                if let Err(e) = ctx.set_text(text.to_string()) {
                     anyhow::bail!("Failed to set clipboard: {e}");
                 }
             }
