@@ -6,6 +6,7 @@ use std::{
 
 use anyhow::Result;
 use arboard::Clipboard;
+use duct::cmd;
 
 /// Copy text to the clipboard. Has special handling for WSL and SSH sessions, otherwise
 /// falls back to the cross-platform `clipboard` crate
@@ -28,6 +29,24 @@ pub fn set_clipboard(text: &str) -> Result<()> {
     }
 
     Ok(())
+}
+
+pub fn get_clipboard() -> Result<String> {
+    if wsl::is_wsl() {
+        let stdout = cmd!("powershell.exe", "get-clipboard").read()?;
+        Ok(stdout.trim().to_string())
+    } else if env::var("SSH_CLIENT").is_ok() {
+        anyhow::bail!("SSH clipboard not supported");
+    } else {
+        // we're probably running on a host/primary OS, so use the default clipboard
+        match Clipboard::new() {
+            Ok(mut ctx) => match ctx.get_text() {
+                Ok(text) => Ok(text),
+                Err(e) => anyhow::bail!("Failed to get clipboard: {e}"),
+            },
+            Err(e) => anyhow::bail!("Failed to create clipboard context: {e}"),
+        }
+    }
 }
 
 /// Set the clipboard contents using OSC 52 (picked up by most terminals)

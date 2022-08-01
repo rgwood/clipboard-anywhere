@@ -1,7 +1,7 @@
 [package]
 name = "clipboard-anywhere"
 description = "Copy text to the clipboard, even in WSL and SSH sessions"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 authors = ["Reilly Wood"]
 repository = "https://github.com/rgwood/clipboard-anywhere"
@@ -13,6 +13,7 @@ license = "MIT"
 anyhow = "1.0.57"
 arboard = { version = "2.1.1", default-features = false }
 base64 = "0.13.0"
+duct = "0.13.5"
 wsl = "0.1.0"
 
 [[bin]]
