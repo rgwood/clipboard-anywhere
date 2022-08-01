@@ -4,16 +4,17 @@
 
 A simple wrapper around [`clipboard`](https://lib.rs/crates/clipboard) that works in a few more situations:
 
-- When used in Linux under WSL, it will copy to the Windows clipboard using `clip.exe`
-- When used in a remote SSH session, it will use the OSC 52 control sequence to copy to the client clipboard
+- In Linux under WSL, it can copy to and from the Windows clipboard (using `clip.exe` and `powershell get-clipboard`)
+- In a remote SSH session, can copy to the local clipboard using the OSC 52 control sequence
 
 ## Usage
 
 ```rust
-use clipboard_anywhere::set_clipboard;
+// Attempt to get clipboard contents. Will return error in an SSH session
+let clipboard_contents: String = clipboard_anywhere::get_clipboard()?;
 
-let text = "Hello, world!";
-clipboard_anywhere::set_clipboard(text)?;
+// Set clipboard contents to "Hello, world!";
+clipboard_anywhere::set_clipboard("Hello, world!")?;
 ```
 
 ## To Do
