@@ -11,7 +11,7 @@ use duct::cmd;
 /// Copy text to the clipboard. Has special handling for WSL and SSH sessions, otherwise
 /// falls back to the cross-platform `clipboard` crate
 pub fn set_clipboard(text: &str) -> Result<()> {
-    if wsl::is_wsl() {
+    if is_wsl::is_wsl() {
         set_wsl_clipboard(text)?;
     } else if env::var("SSH_CLIENT").is_ok() {
         // we're in an SSH session, so set the clipboard using OSC 52 escape sequence
@@ -32,7 +32,7 @@ pub fn set_clipboard(text: &str) -> Result<()> {
 }
 
 pub fn get_clipboard() -> Result<String> {
-    if wsl::is_wsl() {
+    if is_wsl::is_wsl() {
         let stdout = cmd!("powershell.exe", "get-clipboard").read()?;
         Ok(stdout.trim().to_string())
     } else if env::var("SSH_CLIENT").is_ok() {
