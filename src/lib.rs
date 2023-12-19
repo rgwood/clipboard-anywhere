@@ -55,12 +55,16 @@ fn set_clipboard_osc_52(text: &str) {
 
 /// Set the Windows clipboard using powershell.exe in WSL
 fn set_wsl_clipboard(s: &str) -> anyhow::Result<()> {
-    let _ = Command::new("powershell.exe")
-        .arg("-command")
+    let mut powershell = Command::new("powershell.exe")
+        .arg("-NoProfile")
+        .arg("-Command")
         .arg(&format!("Set-Clipboard -Value \"{}\"", s))
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .spawn()?;
+
+    // Wait until the powershell process is finished before returning
+    powershell.wait()?;
 
     Ok(())
 }
