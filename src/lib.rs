@@ -55,10 +55,20 @@ fn set_clipboard_osc_52(text: &str) {
 
 /// Set the Windows clipboard using powershell.exe in WSL
 fn set_wsl_clipboard(s: &str) -> anyhow::Result<()> {
+    // In PowerShell, we can escape literal single-quotes
+    // in a single-quoted string by doubling them, e.g.
+    //
+    // 'hello ''world'''
+    //
+    // gets printed as
+    //
+    // hello 'world'
+    let escaped_s = s.replace("'", "''");
+
     let mut powershell = Command::new("powershell.exe")
         .arg("-NoProfile")
         .arg("-Command")
-        .arg(&format!("Set-Clipboard -Value \"{}\"", s))
+        .arg(&format!("Set-Clipboard -Value '{}'", escaped_s))
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .spawn()?;
