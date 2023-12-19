@@ -1,6 +1,5 @@
 use std::{
     env,
-    io::Write,
     process::{Command, Stdio},
 };
 
@@ -54,15 +53,14 @@ fn set_clipboard_osc_52(text: &str) {
     print!("\x1B]52;c;{}\x07", base64::encode(text));
 }
 
-/// Set the Windows clipboard using clip.exe in WSL
+/// Set the Windows clipboard using powershell.exe in WSL
 fn set_wsl_clipboard(s: &str) -> anyhow::Result<()> {
-    let mut clipboard = Command::new("clip.exe").stdin(Stdio::piped()).spawn()?;
-    let mut clipboard_stdin = clipboard
-        .stdin
-        .take()
-        .ok_or_else(|| anyhow::anyhow!("Could not get stdin handle for clip.exe"))?;
-
-    clipboard_stdin.write_all(s.as_bytes())?;
+    let _ = Command::new("powershell.exe")
+        .arg("-command")
+        .arg(&format!("Set-Clipboard -Value \"{}\"", s))
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn()?;
 
     Ok(())
 }
