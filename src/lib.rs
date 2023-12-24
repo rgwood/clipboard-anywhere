@@ -78,3 +78,37 @@ fn set_wsl_clipboard(s: &str) -> anyhow::Result<()> {
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use anyhow::Ok;
+    // Clipboard's a global resource, so we need to run these tests serially
+    use serial_test::serial;
+
+    fn set_and_get(text: &str) -> Result<()> {
+        set_clipboard(text)?;
+
+        let clipboard_contents = get_clipboard()?;
+        assert_eq!(clipboard_contents, text);
+
+        Ok(())
+    }
+
+    #[test]
+    #[serial]
+    fn set_and_get_ascii() -> Result<()> {
+        let text = "Hello, world!";
+        set_and_get(text)?;
+        Ok(())
+    }
+
+    #[test]
+    #[serial]
+    fn set_and_get_emoji() -> Result<()> {
+        let text = "Hello, world! 🌍";
+        set_and_get(text)?;
+        Ok(())
+    }
+}

@@ -16,6 +16,5 @@ base64 = "0.13.0"
 duct = "0.13.5"
 is-wsl = "0.4.0"
 
-[[bin]]
-name = "test-program"
-path = "src/bin/test.rs"
+[dev-dependencies]
+serial_test = "*"
