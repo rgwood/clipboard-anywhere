@@ -1,6 +1,5 @@
 use std::{
     env,
-    io::Write,
     process::{Command, Stdio},
 };
 
@@ -54,15 +53,28 @@ fn set_clipboard_osc_52(text: &str) {
     print!("\x1B]52;c;{}\x07", base64::encode(text));
 }
 
-/// Set the Windows clipboard using clip.exe in WSL
+/// Set the Windows clipboard using powershell.exe in WSL
 fn set_wsl_clipboard(s: &str) -> anyhow::Result<()> {
-    let mut clipboard = Command::new("clip.exe").stdin(Stdio::piped()).spawn()?;
-    let mut clipboard_stdin = clipboard
-        .stdin
-        .take()
-        .ok_or_else(|| anyhow::anyhow!("Could not get stdin handle for clip.exe"))?;
+    // In PowerShell, we can escape literal single-quotes
+    // in a single-quoted string by doubling them, e.g.
+    //
+    // 'hello ''world'''
+    //
+    // gets printed as
+    //
+    // hello 'world'
+    let escaped_s = s.replace("'", "''");
 
-    clipboard_stdin.write_all(s.as_bytes())?;
+    let mut powershell = Command::new("powershell.exe")
+        .arg("-NoProfile")
+        .arg("-Command")
+        .arg(&format!("Set-Clipboard -Value '{}'", escaped_s))
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn()?;
+
+    // Wait until the powershell process is finished before returning
+    powershell.wait()?;
 
     Ok(())
 }
